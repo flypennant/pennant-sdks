@@ -25,6 +25,8 @@ export type PennantProviderProps = {
   apiUrl: string
   clientKey: string
   environment?: PennantEnvironment
+  /** Project id. Omitted requests evaluate the default project. */
+  project?: string
   context?: PennantEvaluationContext
   pollIntervalMs?: number
   children: ReactNode
@@ -43,6 +45,7 @@ export function PennantProvider({
   apiUrl,
   clientKey,
   environment = "development",
+  project,
   context,
   pollIntervalMs = 15000,
   children,
@@ -67,6 +70,7 @@ export function PennantProvider({
         body: JSON.stringify({
           context: parsedContext,
           environment,
+          ...(project ? { project } : {}),
         }),
       })
       const body = (await response.json().catch(() => null)) as {
@@ -86,7 +90,7 @@ export function PennantProvider({
     } finally {
       if (id === requestId.current) setLoading(false)
     }
-  }, [apiUrl, clientKey, environment, contextKey])
+  }, [apiUrl, clientKey, environment, project, contextKey])
 
   useEffect(() => {
     const timer =
