@@ -4,7 +4,7 @@ import type { ReactNode } from "react"
 
 import { useFlag } from "./provider"
 
-export function Flag({
+function Flag({
   name,
   children,
   fallback = null,
@@ -16,3 +16,5 @@ export function Flag({
   const enabled = useFlag(name)
   return enabled ? children : fallback
 }
+
+export { Flag }

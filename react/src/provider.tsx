@@ -11,17 +11,17 @@ import {
   type ReactNode,
 } from "react"
 
-export type PennantEnvironment = "development" | "production"
+type PennantEnvironment = string
 
-export type PennantEvaluationContext = {
+type PennantEvaluationContext = {
   userId?: string
   sessionId?: string
   properties?: Record<string, string>
 }
 
-export type PennantFlagMap = Record<string, { enabled: boolean }>
+type PennantFlagMap = Record<string, { enabled: boolean; variant?: string }>
 
-export type PennantProviderProps = {
+type PennantProviderProps = {
   apiUrl: string
   clientKey: string
   environment?: PennantEnvironment
@@ -41,7 +41,7 @@ type PennantValue = {
 
 const PennantContext = createContext<PennantValue | null>(null)
 
-export function PennantProvider({
+function PennantProvider({
   apiUrl,
   clientKey,
   environment = "development",
@@ -118,12 +118,10 @@ export function PennantProvider({
     [flags, loading, error, refetch],
   )
 
-  return (
-    <PennantContext.Provider value={value}>{children}</PennantContext.Provider>
-  )
+  return <PennantContext.Provider value={value}>{children}</PennantContext.Provider>
 }
 
-export function usePennant() {
+function usePennant() {
   const value = useContext(PennantContext)
   if (!value) {
     throw new Error("usePennant must be used within PennantProvider.")
@@ -131,10 +129,17 @@ export function usePennant() {
   return value
 }
 
-export function useFlags(): PennantFlagMap {
+function useFlags(): PennantFlagMap {
   return usePennant().flags
 }
 
-export function useFlag(key: string): boolean {
+function useFlag(key: string): boolean {
   return usePennant().flags[key]?.enabled ?? false
 }
+
+function useVariant(key: string): string | undefined {
+  return usePennant().flags[key]?.variant
+}
+
+export { PennantProvider, usePennant, useFlags, useFlag, useVariant }
+export type { PennantEnvironment, PennantEvaluationContext, PennantFlagMap, PennantProviderProps }
