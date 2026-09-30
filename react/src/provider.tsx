@@ -16,6 +16,8 @@ type PennantEnvironment = string
 type PennantEvaluationContext = {
   userId?: string
   sessionId?: string
+  remoteAddress?: string
+  hostname?: string
   properties?: Record<string, string>
 }
 

@@ -1,0 +1,10 @@
+README.md
+pyproject.toml
+pennant/__init__.py
+pennant/client.py
+pennant.egg-info/PKG-INFO
+pennant.egg-info/SOURCES.txt
+pennant.egg-info/dependency_links.txt
+pennant.egg-info/requires.txt
+pennant.egg-info/top_level.txt
+tests/test_client.py

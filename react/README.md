@@ -40,3 +40,5 @@ function Dashboard() {
 ```
 
 `apiUrl` is the Pennant origin. An empty string uses the current origin. Gradual rollout stays off unless `context.userId` is set. The same `userId` always hashes to the same bucket for a flag.
+
+`context` accepts `userId`, `sessionId`, `remoteAddress`, `hostname`, and a `properties` string map. Those fields match `POST /api/client/evaluate` (see `sdk/CONTRACT.md`). Variant stickiness uses `userId`, then `sessionId`.
