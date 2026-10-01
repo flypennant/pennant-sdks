@@ -1,10 +1,23 @@
 {
   "name": "@pennant/react",
   "version": "1.0.0",
-  "private": true,
+  "description": "React client for the Pennant feature-flag evaluate API",
+  "license": "MIT",
   "type": "module",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gizmo0506/pennant.git",
+    "directory": "sdk/react"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "exports": {
     ".": {
       "types": "./src/index.ts",

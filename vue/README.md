@@ -2,6 +2,14 @@
 
 Vue client for [Pennant](../../README.md). Matches the shared contract in `sdk/CONTRACT.md` and the React baseline at `sdk/react`. Vue is a peer dependency.
 
+## Install
+
+```bash
+npm install https://github.com/gizmo0506/pennant/releases/download/sdk%2Fvue%2Fv1.0.0/pennant-vue-1.0.0.tgz
+```
+
+You do not need this monorepo. A local checkout can still use `npm install ./sdk/vue`.
+
 ## Evaluate client
 
 ```ts

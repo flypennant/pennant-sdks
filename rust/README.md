@@ -6,7 +6,9 @@ Rust client for [Pennant](../../README.md). Matches `sdk/CONTRACT.md`.
 
 ```toml
 [dependencies]
-pennant = { path = "./sdk/rust" }
+pennant = { git = "https://github.com/gizmo0506/pennant", tag = "sdk/rust/v1.0.0", path = "sdk/rust" }
+# local checkout:
+# pennant = { path = "./sdk/rust" }
 ```
 
 ## Usage

@@ -2,6 +2,14 @@
 
 Node.js server client for [Pennant](../../README.md). Matches the shared contract in `sdk/CONTRACT.md`. No React or DOM dependency. Uses global `fetch` (Node 20+).
 
+## Install
+
+```bash
+npm install https://github.com/gizmo0506/pennant/releases/download/sdk%2Fnode%2Fv1.0.0/pennant-node-1.0.0.tgz
+```
+
+You do not need this monorepo. A local checkout can still use `npm install ./sdk/node`.
+
 ## Usage
 
 ```ts

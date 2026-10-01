@@ -2,6 +2,14 @@
 
 React client for [Pennant](../../README.md). The provider polls `POST /api/client/evaluate` and exposes the result to hooks and the `Flag` component.
 
+## Install
+
+```bash
+npm install https://github.com/gizmo0506/pennant/releases/download/sdk%2Freact%2Fv1.0.0/pennant-react-1.0.0.tgz
+```
+
+You do not need this monorepo. A local checkout can still use `npm install ./sdk/react`.
+
 ## Usage
 
 ```tsx

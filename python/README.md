@@ -5,6 +5,8 @@ Python client for [Pennant](../../README.md). Matches `sdk/CONTRACT.md`.
 ## Install
 
 ```bash
+pip install "pennant @ git+https://github.com/gizmo0506/pennant.git@sdk/python/v1.0.0#subdirectory=sdk/python"
+# local checkout:
 pip install ./sdk/python
 ```
 
