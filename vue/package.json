@@ -1,6 +1,6 @@
 {
   "name": "@pennant/vue",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Vue 3 client for the Pennant feature-flag evaluate API",
   "license": "MIT",
   "type": "module",
