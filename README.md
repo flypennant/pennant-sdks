@@ -17,13 +17,31 @@ PyPI and crates.io already have unrelated packages called `pennant`, so those tw
 ## Develop
 
 ```bash
-npm install
-npm run build   # tsc → <sdk>/dist for the four JS packages
-npm test        # JS SDK tests and release planning tests
+npm install       # also installs the husky hooks
+npm run build     # tsc → <sdk>/dist for the four JS packages
+npm run check     # typecheck, ESLint, Prettier, tests
+npm run release   # print the next release plan without publishing
 ```
 
-Python, Go, and Rust run their own tests: `pytest` in `python/`, `go test ./...` in `go/`, `cargo test` in `rust/`.
+| SDK    | Lint and format                                               | Test            |
+| ------ | ------------------------------------------------------------- | --------------- |
+| JS     | `npm run lint`, `npm run format:check`                        | `npm test`      |
+| Python | `ruff check .`, `ruff format --check .` in `python/`          | `pytest`        |
+| Go     | `gofmt -l .`, `go vet ./...` in `go/`                         | `go test ./...` |
+| Rust   | `cargo fmt --check`, `cargo clippy -- -D warnings` in `rust/` | `cargo test`    |
+
+Commits follow [Conventional Commits](https://www.conventionalcommits.org). Husky runs lint-staged on commit, commitlint on the message, and the JS checks on push. CI runs every row of the table.
 
 ## Versions and tags
 
 Each SDK is versioned on its own. Tags are `<sdk>/vX.Y.Z`, for example `react/v1.2.0` or `go/v1.0.3`. The prefix must match the folder because Go resolves module versions that way. Use conventional commits. A `feat` touching `react/` bumps the React minor. A `fix` or `chore` bumps the patch. A breaking change bumps the major. `scripts/release-plan.mjs` works out the next version for each SDK from those commits.
+
+After CI passes on `main`, the Release workflow tags every SDK that changed, writes the new version into its manifest in a `chore(release)` commit, creates a GitHub release with notes, and publishes to the registry. Publishing needs these repository secrets:
+
+| Secret                 | Publishes                                                  |
+| ---------------------- | ---------------------------------------------------------- |
+| `NPM_TOKEN`            | `@pennant/*` to npm. Use a granular token with bypass 2FA. |
+| `PYPI_TOKEN`           | `pennant-sdk` to PyPI                                      |
+| `CARGO_REGISTRY_TOKEN` | `pennant-sdk` to crates.io                                 |
+
+Without a secret, that registry is skipped and the tag and GitHub release still happen. Go needs no secret; the tag is the release.
