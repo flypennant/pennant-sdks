@@ -34,9 +34,7 @@ class PennantClient:
         self._opener = opener or urlopen
         self._flags: MutableMapping[str, Mapping[str, Any]] = {}
 
-    def evaluate(
-        self, context: Mapping[str, Any] | None = None
-    ) -> Mapping[str, Mapping[str, Any]]:
+    def evaluate(self, context: Mapping[str, Any] | None = None) -> Mapping[str, Mapping[str, Any]]:
         payload: dict[str, Any] = {
             "context": dict(context if context is not None else self.context),
             "environment": self.environment,

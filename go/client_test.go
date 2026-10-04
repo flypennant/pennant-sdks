@@ -95,8 +95,8 @@ func TestEvaluateUnauthorized(t *testing.T) {
 	defer server.Close()
 
 	client := NewClient(ClientOptions{
-		APIURL:    server.URL,
-		ClientKey: "bad-key",
+		APIURL:     server.URL,
+		ClientKey:  "bad-key",
 		HTTPClient: server.Client(),
 	})
 	_, err := client.Evaluate(nil)
