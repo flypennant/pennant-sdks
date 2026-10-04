@@ -1,14 +1,18 @@
 # pennant
 
-Python client for [Pennant](../../README.md). Matches `sdk/CONTRACT.md`.
+Python client for [Pennant](../README.md). Matches [`CONTRACT.md`](../CONTRACT.md).
 
 ## Install
 
 ```bash
-pip install "pennant @ git+https://github.com/gizmo0506/pennant.git@sdk/python/v1.0.0#subdirectory=sdk/python"
+pip install pennant-sdk
+# straight from GitHub:
+pip install "pennant-sdk @ git+https://github.com/gizmo0506/pennant-sdks.git@python/v1.1.0#subdirectory=python"
 # local checkout:
-pip install ./sdk/python
+pip install ./python
 ```
+
+The PyPI name is `pennant-sdk`. The import name is `pennant`.
 
 ## Usage
 

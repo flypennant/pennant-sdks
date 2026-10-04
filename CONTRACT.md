@@ -63,4 +63,4 @@ If neither is set, the flag can still be enabled, but no variant is returned. Th
 
 ## Behavioural baseline
 
-The React SDK at `sdk/react` (`@pennant/react`) is the behavioural baseline for this contract. New SDKs should match its request shape, response shape, and stickiness rules. Do not rewrite that package for this contract story.
+The React SDK at `react/` (`@pennant/react`) is the behavioural baseline for this contract. New SDKs should match its request shape, response shape, and stickiness rules. Do not rewrite that package for this contract story.

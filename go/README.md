@@ -1,13 +1,13 @@
 # pennant (Go)
 
-Go client for [Pennant](../../README.md). Matches `sdk/CONTRACT.md`. No cgo.
+Go client for [Pennant](../README.md). Matches [`CONTRACT.md`](../CONTRACT.md). No cgo.
 
 ## Install
 
 ```bash
-go get github.com/gizmo0506/pennant/sdk/go@v1.0.0
+go get github.com/gizmo0506/pennant-sdks/go@latest
 # or from a local checkout:
-go mod edit -replace github.com/gizmo0506/pennant/sdk/go=./sdk/go
+go mod edit -replace github.com/gizmo0506/pennant-sdks/go=./go
 ```
 
 ## Usage

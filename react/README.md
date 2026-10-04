@@ -1,14 +1,14 @@
 # @pennant/react
 
-React client for [Pennant](../../README.md). The provider polls `POST /api/client/evaluate` and exposes the result to hooks and the `Flag` component.
+React client for [Pennant](../README.md). The provider polls `POST /api/client/evaluate` and exposes the result to hooks and the `Flag` component.
 
 ## Install
 
 ```bash
-npm install https://github.com/gizmo0506/pennant/releases/download/sdk%2Freact%2Fv1.0.0/pennant-react-1.0.0.tgz
+npm install @pennant/react
 ```
 
-You do not need this monorepo. A local checkout can still use `npm install ./sdk/react`.
+From a local checkout of this repo: `npm install ./react`.
 
 ## Usage
 
@@ -49,4 +49,4 @@ function Dashboard() {
 
 `apiUrl` is the Pennant origin. An empty string uses the current origin. Gradual rollout stays off unless `context.userId` is set. The same `userId` always hashes to the same bucket for a flag.
 
-`context` accepts `userId`, `sessionId`, `remoteAddress`, `hostname`, and a `properties` string map. Those fields match `POST /api/client/evaluate` (see `sdk/CONTRACT.md`). Variant stickiness uses `userId`, then `sessionId`.
+`context` accepts `userId`, `sessionId`, `remoteAddress`, `hostname`, and a `properties` string map. Those fields match `POST /api/client/evaluate` (see [`CONTRACT.md`](../CONTRACT.md)). Variant stickiness uses `userId`, then `sessionId`.

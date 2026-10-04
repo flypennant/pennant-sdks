@@ -1,14 +1,14 @@
 # pennant (Rust)
 
-Rust client for [Pennant](../../README.md). Matches `sdk/CONTRACT.md`.
+Rust client for [Pennant](../README.md). Matches [`CONTRACT.md`](../CONTRACT.md).
 
 ## Install
 
 ```toml
 [dependencies]
-pennant = { git = "https://github.com/gizmo0506/pennant", tag = "sdk/rust/v1.0.0", path = "sdk/rust" }
-# local checkout:
-# pennant = { path = "./sdk/rust" }
+pennant = { package = "pennant-sdk", version = "1" }
+# straight from GitHub:
+# pennant = { package = "pennant-sdk", git = "https://github.com/gizmo0506/pennant-sdks", tag = "rust/v1.1.0" }
 ```
 
 ## Usage

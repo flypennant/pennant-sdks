@@ -1,14 +1,14 @@
 # @pennant/js
 
-Vanilla browser (and fetch-capable) client for [Pennant](../../README.md). Matches the shared contract in `sdk/CONTRACT.md`. No React or Vue dependency.
+Vanilla browser (and fetch-capable) client for [Pennant](../README.md). Matches the shared contract in [`CONTRACT.md`](../CONTRACT.md). No React or Vue dependency.
 
 ## Install
 
 ```bash
-npm install https://github.com/gizmo0506/pennant/releases/download/sdk%2Fjs%2Fv1.0.0/pennant-js-1.0.0.tgz
+npm install @pennant/js
 ```
 
-You do not need this monorepo. A local checkout can still use `npm install ./sdk/js`.
+From a local checkout of this repo: `npm install ./js`.
 
 ## Usage
 

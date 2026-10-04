@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react"
 
-import { useFlag } from "./provider"
+import { useFlag } from "./provider.tsx"
 
 function Flag({
   name,
