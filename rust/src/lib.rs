@@ -177,37 +177,60 @@ pub fn get_variant<'a>(flags: &'a FlagMap, key: &str) -> Option<&'a str> {
 mod tests {
     use super::*;
     use std::io::{Read, Write};
-    use std::net::TcpListener;
+    use std::net::{TcpListener, TcpStream};
+    use std::sync::mpsc;
     use std::thread;
 
-    fn spawn_mock(status_line: &str, body: &str) -> String {
+    /// Reads one full request. Clients may send headers and body in separate
+    /// writes, so a single `read` can return only the headers.
+    fn read_request(stream: &mut TcpStream) -> String {
+        let mut data = Vec::new();
+        let mut buf = [0_u8; 4096];
+        loop {
+            let text = String::from_utf8_lossy(&data);
+            if let Some(end) = text.find("\r\n\r\n") {
+                let length = text[..end]
+                    .lines()
+                    .find_map(|line| {
+                        let (name, value) = line.split_once(':')?;
+                        name.eq_ignore_ascii_case("content-length")
+                            .then(|| value.trim().parse::<usize>().ok())
+                            .flatten()
+                    })
+                    .unwrap_or(0);
+                if data.len() >= end + 4 + length {
+                    break;
+                }
+            }
+            match stream.read(&mut buf) {
+                Ok(0) | Err(_) => break,
+                Ok(n) => data.extend_from_slice(&buf[..n]),
+            }
+        }
+        String::from_utf8_lossy(&data).into_owned()
+    }
+
+    fn spawn_mock(status_line: &str, body: &str) -> (String, mpsc::Receiver<String>) {
         let listener = TcpListener::bind("127.0.0.1:0").expect("bind");
         let addr = listener.local_addr().expect("addr");
         let status = status_line.to_string();
         let body = body.to_string();
+        let (sent, received) = mpsc::channel();
         thread::spawn(move || {
             let (mut stream, _) = listener.accept().expect("accept");
-            let mut buf = [0_u8; 8192];
-            let n = stream.read(&mut buf).unwrap_or(0);
-            let request = String::from_utf8_lossy(&buf[..n]);
-            assert!(request.starts_with("POST /api/client/evaluate"));
-            assert!(request.contains("Authorization: Bearer pennant-client-demo"));
-            assert!(request.contains("\"userId\":\"ada\""));
-            assert!(request.contains("\"remoteAddress\":\"127.0.0.1\""));
-            assert!(request.contains("\"hostname\":\"app.local\""));
-            assert!(request.contains("\"environment\":\"production\""));
+            let _ = sent.send(read_request(&mut stream));
             let response = format!(
                 "{status}\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{body}",
                 body.len()
             );
             let _ = stream.write_all(response.as_bytes());
         });
-        format!("http://{addr}")
+        (format!("http://{addr}"), received)
     }
 
     #[test]
     fn evaluate_posts_bearer_and_returns_variant() {
-        let api_url = spawn_mock(
+        let (api_url, request) = spawn_mock(
             "HTTP/1.1 200 OK",
             r#"{"flags":{"checkout-v2":{"enabled":true,"variant":"treatment"}}}"#,
         );
@@ -224,6 +247,13 @@ mod tests {
             },
         });
         let flags = client.evaluate(None).expect("evaluate");
+        let request = request.recv().expect("request");
+        assert!(request.starts_with("POST /api/client/evaluate"));
+        assert!(request.contains("Authorization: Bearer pennant-client-demo"));
+        assert!(request.contains("\"userId\":\"ada\""));
+        assert!(request.contains("\"remoteAddress\":\"127.0.0.1\""));
+        assert!(request.contains("\"hostname\":\"app.local\""));
+        assert!(request.contains("\"environment\":\"production\""));
         assert!(client.is_enabled("checkout-v2"));
         assert_eq!(client.get_variant("checkout-v2"), Some("treatment"));
         assert!(is_enabled(&flags, "checkout-v2"));
@@ -236,8 +266,7 @@ mod tests {
         let addr = listener.local_addr().expect("addr");
         thread::spawn(move || {
             let (mut stream, _) = listener.accept().expect("accept");
-            let mut buf = [0_u8; 4096];
-            let _ = stream.read(&mut buf);
+            let _ = read_request(&mut stream);
             let body = r#"{"error":"Invalid client key."}"#;
             let response = format!(
                 "HTTP/1.1 401 Unauthorized\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{body}",
