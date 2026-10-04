@@ -12,6 +12,6 @@ In `.ts` and `.tsx` files, every `export` and `export default` goes at the botto
 
 Husky runs lint-staged (ESLint + Prettier) on commit, commitlint on commit-msg, and `npm run check` pieces on push. Commits follow Conventional Commits; the header is at most 100 characters.
 
-Releases follow `.agents/skills/pennant-semver`. After CI passes on `main`, `.github/workflows/release.yml` bumps each SDK whose folder changed, tags `<sdk>/vX.Y.Z`, creates a GitHub release, and publishes when `NPM_TOKEN`, `PYPI_TOKEN`, or `CARGO_REGISTRY_TOKEN` is set. Do not tag releases by hand. `npm run release` prints the plan without publishing.
+Releases follow `.agents/skills/pennant-semver`. After CI passes on `main`, `.github/workflows/release.yml` bumps each SDK whose folder changed, tags `<sdk>/vX.Y.Z`, creates a GitHub release, and publishes. npm uses trusted publishing (no secret). PyPI and crates.io publish when `PYPI_TOKEN` or `CARGO_REGISTRY_TOKEN` is set. Do not tag releases by hand. `npm run release` prints the plan without publishing.
 
 Agent skills live in `.agents/skills`. `.cursor` and `.claude` are gitignored. `prepare` recreates `.cursor/skills` and `.claude/skills` as symlinks to `.agents/skills`.

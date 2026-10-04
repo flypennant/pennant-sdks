@@ -1,8 +1,9 @@
 name: Release
 
 # Runs after CI passes on main. Bumps each changed SDK from conventional
-# commits, tags <sdk>/vX.Y.Z, creates the GitHub release, and publishes to
-# npm, PyPI, and crates.io when the matching secret is set.
+# commits, tags <sdk>/vX.Y.Z, creates the GitHub release, and publishes.
+# npm uses trusted publishing (OIDC, needs id-token: write and npm >= 11.5.1).
+# PyPI and crates.io publish when PYPI_TOKEN or CARGO_REGISTRY_TOKEN is set.
 on:
   workflow_run:
     workflows: [CI]
@@ -42,13 +43,14 @@ jobs:
 
       - name: Install
         run: |
+          npm install -g npm@latest
           npm ci
           python3 -m pip install build twine
 
       - name: Cut version tags, GitHub releases, and registry publishes
         env:
           GH_TOKEN: ${{ github.token }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_PUBLISH: "1"
           PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
         run: node scripts/release.mjs

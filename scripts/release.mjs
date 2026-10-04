@@ -186,8 +186,9 @@ function npmHasVersion(id, version) {
   }
 }
 
+// npm trusted publishing: the GitHub OIDC token authenticates, so no npm secret is needed.
 function publishNpm(plan) {
-  if (!NPM_SDKS.has(plan.id) || !process.env.NODE_AUTH_TOKEN) return
+  if (!NPM_SDKS.has(plan.id) || process.env.NPM_PUBLISH !== "1") return
   if (npmHasVersion(plan.id, plan.version)) {
     console.log(`npm already has ${plan.id} ${plan.version}`)
     return

@@ -50,4 +50,4 @@ After the first tag, write the new version back, then commit `chore(release): <t
 
 ## Publishing
 
-Publishing runs only when the secret is set: `NPM_TOKEN` (granular token with bypass 2FA), `PYPI_TOKEN`, `CARGO_REGISTRY_TOKEN`. The script skips a version npm already has, and twine skips existing files.
+npm publishes through trusted publishing: each `@pennant/*` package trusts `flypennant/pennant-sdks` and `release.yml`, so there is no npm secret. PyPI and crates.io publish only when `PYPI_TOKEN` or `CARGO_REGISTRY_TOKEN` is set. The script skips a version npm already has, and twine skips existing files.

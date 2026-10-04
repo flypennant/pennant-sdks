@@ -36,12 +36,6 @@ Commits follow [Conventional Commits](https://www.conventionalcommits.org). Husk
 
 Each SDK is versioned on its own. Tags are `<sdk>/vX.Y.Z`, for example `react/v1.2.0` or `go/v1.0.3`. The prefix must match the folder because Go resolves module versions that way. Use conventional commits. A `feat` touching `react/` bumps the React minor. A `fix` or `chore` bumps the patch. A breaking change bumps the major. `scripts/release-plan.mjs` works out the next version for each SDK from those commits.
 
-After CI passes on `main`, the Release workflow tags every SDK that changed, writes the new version into its manifest in a `chore(release)` commit, creates a GitHub release with notes, and publishes to the registry. Publishing needs these repository secrets:
+After CI passes on `main`, the Release workflow tags every SDK that changed, writes the new version into its manifest in a `chore(release)` commit, creates a GitHub release with notes, and publishes to the registry.
 
-| Secret                 | Publishes                                                  |
-| ---------------------- | ---------------------------------------------------------- |
-| `NPM_TOKEN`            | `@pennant/*` to npm. Use a granular token with bypass 2FA. |
-| `PYPI_TOKEN`           | `pennant-sdk` to PyPI                                      |
-| `CARGO_REGISTRY_TOKEN` | `pennant-sdk` to crates.io                                 |
-
-Without a secret, that registry is skipped and the tag and GitHub release still happen. Go needs no secret; the tag is the release.
+npm uses [trusted publishing](https://docs.npmjs.com/trusted-publishers). Each `@pennant/*` package on npmjs.com trusts `flypennant/pennant-sdks` and the `release.yml` workflow, so there is no npm secret. PyPI and crates.io publish when the `PYPI_TOKEN` or `CARGO_REGISTRY_TOKEN` repository secret is set. Without one, that registry is skipped and the tag and GitHub release still happen. Go needs nothing; the tag is the release.
