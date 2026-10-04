@@ -1,6 +1,6 @@
 # Pennant SDKs
 
-Client libraries for [Pennant](https://flypennant.si), a self-hosted feature-flag console. Every SDK calls `POST /api/client/evaluate` with a project client key. [`CONTRACT.md`](CONTRACT.md) describes the request and response.
+Client libraries for [Pennant](https://flypennant.com), a self-hosted feature-flag console. Every SDK calls `POST /api/client/evaluate` with a project client key. [`CONTRACT.md`](CONTRACT.md) describes the request and response.
 
 | SDK               | Install                                                | Import           |
 | ----------------- | ------------------------------------------------------ | ---------------- |
