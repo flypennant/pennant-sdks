@@ -66,6 +66,7 @@ describe("release plan", () => {
         "python/v1.1.0",
         "go/v1.1.0",
         "rust/v1.1.0",
+        "mcp/v1.1.0",
       ],
     )
     assert.equal(

@@ -12,6 +12,13 @@ Client libraries for [Pennant](https://flypennant.com), a self-hosted feature-fl
 | [Go](go/)         | `go get github.com/flypennant/pennant-sdks/go`         | `pennant`        |
 | [Rust](rust/)     | `pennant = { package = "pennant-sdk", version = "1" }` | `pennant`        |
 
+## AI assistants
+
+| Package                 | Install                                                  | Use                                                                                |
+| ----------------------- | -------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| [MCP server](mcp/)      | `npx -y @pennant/mcp`                                    | Let an assistant read, explain, and change flags, and wire an SDK into a codebase. |
+| [Agent skills](skills/) | Copy into `.claude/skills` or your agent's skills folder | Step-by-step guides for adding the SDK, flagging a feature, and removing a flag.   |
+
 PyPI and crates.io already have unrelated packages called `pennant`, so those two publish as `pennant-sdk`. The import name is still `pennant`.
 
 ## Develop

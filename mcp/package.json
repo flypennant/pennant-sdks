@@ -1,0 +1,35 @@
+{
+  "name": "@pennant/mcp",
+  "version": "1.0.0",
+  "description": "Model Context Protocol server for Pennant: read, explain, and change feature flags, and wire the SDK into a codebase",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "pennant-mcp": "./dist/index.js"
+  },
+  "main": "./dist/index.js",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "prepack": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flypennant/pennant-sdks.git",
+    "directory": "mcp"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.0",
+    "zod": "^4.6.5"
+  }
+}

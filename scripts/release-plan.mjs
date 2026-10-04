@@ -1,6 +1,6 @@
 const SEMVER = /^(\d+)\.(\d+)\.(\d+)$/
 
-const SDK_IDS = ["react", "js", "vue", "node", "python", "go", "rust"]
+const SDK_IDS = ["react", "js", "vue", "node", "python", "go", "rust", "mcp"]
 
 // Tag prefixes match the folder. Go resolves `go/vX.Y.Z` for the module in go/.
 const PACKAGES = SDK_IDS.map((id) => ({

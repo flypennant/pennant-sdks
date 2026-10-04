@@ -4,6 +4,8 @@ Client libraries for the Pennant evaluate API. Every SDK matches `CONTRACT.md`. 
 
 Each SDK lives in its own folder: `react/`, `js/`, `vue/`, `node/` (npm workspaces under `@pennant/*`), `python/` (PyPI `pennant-sdk`, import `pennant`), `go/` (module `github.com/flypennant/pennant-sdks/go`), `rust/` (crate `pennant-sdk`, lib `pennant`).
 
+`mcp/` is `@pennant/mcp`, a stdio Model Context Protocol server that signs in to a Pennant console as a user and exposes read, explain, write, and SDK-setup tools. `skills/` holds customer-facing agent skills (`SKILL.md` folders); `.agents/skills` holds this repo's own development skills.
+
 JS packages build with `tsc` to `<sdk>/dist`. Source imports use explicit `.ts`/`.tsx` extensions; `rewriteRelativeImportExtensions` turns them into `.js` in the output. Tests run straight from source with `node --experimental-strip-types`.
 
 In `.ts` and `.tsx` files, every `export` and `export default` goes at the bottom. Declare the value or type first, then export it after the rest of the module. `"use client"` and imports stay at the top. ESLint enforces this with `pennant/exports-at-bottom`.

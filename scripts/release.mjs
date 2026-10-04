@@ -32,9 +32,10 @@ const FILES = {
   python: { toml: ["python/pyproject.toml"] },
   go: {},
   rust: { toml: ["rust/Cargo.toml"], cargoLock: ["rust/Cargo.lock"] },
+  mcp: { packageJson: ["mcp/package.json"], lockPath: "mcp" },
 }
 
-const NPM_SDKS = new Set(["react", "js", "vue", "node"])
+const NPM_SDKS = new Set(["react", "js", "vue", "node", "mcp"])
 
 function run(command, args, options = {}) {
   return execFileSync(command, args, {
@@ -177,6 +178,16 @@ function uploadSdkTarball(id, tag) {
   run("gh", ["release", "upload", tag, tarball, "--clobber"], { stdio: "inherit" })
 }
 
+function npmHasPackage(id) {
+  const { name } = JSON.parse(readText(`${id}/package.json`))
+  try {
+    run("npm", ["view", name, "name"])
+    return true
+  } catch {
+    return false
+  }
+}
+
 function npmHasVersion(id, version) {
   const { name } = JSON.parse(readText(`${id}/package.json`))
   try {
@@ -189,6 +200,14 @@ function npmHasVersion(id, version) {
 // npm trusted publishing: the GitHub OIDC token authenticates, so no npm secret is needed.
 function publishNpm(plan) {
   if (!NPM_SDKS.has(plan.id) || process.env.NPM_PUBLISH !== "1") return
+  // Trusted publishing is configured per package on npmjs.com, so a brand-new
+  // package has to be published once by hand before CI can publish it.
+  if (!npmHasPackage(plan.id)) {
+    console.log(
+      `${plan.id} is not on npm yet. Publish it once by hand, then add the trusted publisher.`,
+    )
+    return
+  }
   if (npmHasVersion(plan.id, plan.version)) {
     console.log(`npm already has ${plan.id} ${plan.version}`)
     return
