@@ -5,9 +5,9 @@ Go client for [Pennant](../README.md). Matches [`CONTRACT.md`](../CONTRACT.md). 
 ## Install
 
 ```bash
-go get github.com/gizmo0506/pennant-sdks/go@latest
+go get github.com/flypennant/pennant-sdks/go@latest
 # or from a local checkout:
-go mod edit -replace github.com/gizmo0506/pennant-sdks/go=./go
+go mod edit -replace github.com/flypennant/pennant-sdks/go=./go
 ```
 
 ## Usage

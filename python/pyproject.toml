@@ -13,7 +13,7 @@ authors = [{ name = "Pennant" }]
 dependencies = []
 
 [project.urls]
-Repository = "https://github.com/gizmo0506/pennant-sdks"
+Repository = "https://github.com/flypennant/pennant-sdks"
 
 [project.optional-dependencies]
 dev = ["pytest>=8"]

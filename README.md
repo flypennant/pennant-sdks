@@ -9,7 +9,7 @@ Client libraries for [Pennant](https://flypennant.si), a self-hosted feature-fla
 | [Vue](vue/) | `npm install @pennant/vue` | `@pennant/vue` |
 | [Node](node/) | `npm install @pennant/node` | `@pennant/node` |
 | [Python](python/) | `pip install pennant-sdk` | `import pennant` |
-| [Go](go/) | `go get github.com/gizmo0506/pennant-sdks/go` | `pennant` |
+| [Go](go/) | `go get github.com/flypennant/pennant-sdks/go` | `pennant` |
 | [Rust](rust/) | `pennant = { package = "pennant-sdk", version = "1" }` | `pennant` |
 
 PyPI and crates.io already have unrelated packages called `pennant`, so those two publish as `pennant-sdk`. The import name is still `pennant`.

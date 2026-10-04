@@ -7,7 +7,7 @@ Python client for [Pennant](../README.md). Matches [`CONTRACT.md`](../CONTRACT.m
 ```bash
 pip install pennant-sdk
 # straight from GitHub:
-pip install "pennant-sdk @ git+https://github.com/gizmo0506/pennant-sdks.git@python/v1.1.0#subdirectory=python"
+pip install "pennant-sdk @ git+https://github.com/flypennant/pennant-sdks.git@python/v1.1.0#subdirectory=python"
 # local checkout:
 pip install ./python
 ```

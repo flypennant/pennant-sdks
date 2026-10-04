@@ -8,7 +8,7 @@ Rust client for [Pennant](../README.md). Matches [`CONTRACT.md`](../CONTRACT.md)
 [dependencies]
 pennant = { package = "pennant-sdk", version = "1" }
 # straight from GitHub:
-# pennant = { package = "pennant-sdk", git = "https://github.com/gizmo0506/pennant-sdks", tag = "rust/v1.1.0" }
+# pennant = { package = "pennant-sdk", git = "https://github.com/flypennant/pennant-sdks", tag = "rust/v1.1.0" }
 ```
 
 ## Usage
