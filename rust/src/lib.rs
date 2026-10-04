@@ -159,9 +159,7 @@ impl Client {
     }
 
     pub fn get_variant(&self, key: &str) -> Option<&str> {
-        self.flags
-            .get(key)
-            .and_then(|flag| flag.variant.as_deref())
+        self.flags.get(key).and_then(|flag| flag.variant.as_deref())
     }
 }
 

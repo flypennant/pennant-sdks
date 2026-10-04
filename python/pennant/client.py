@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
-from typing import Any, Mapping, MutableMapping, Optional
+import json
+from collections.abc import Mapping, MutableMapping
+from typing import Any
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
-import json
 
 
 class PennantError(Exception):
@@ -21,8 +22,8 @@ class PennantClient:
         api_url: str,
         client_key: str,
         environment: str = "development",
-        project: Optional[str] = None,
-        context: Optional[Mapping[str, Any]] = None,
+        project: str | None = None,
+        context: Mapping[str, Any] | None = None,
         opener=None,
     ) -> None:
         self.api_url = api_url.rstrip("/")
@@ -34,7 +35,7 @@ class PennantClient:
         self._flags: MutableMapping[str, Mapping[str, Any]] = {}
 
     def evaluate(
-        self, context: Optional[Mapping[str, Any]] = None
+        self, context: Mapping[str, Any] | None = None
     ) -> Mapping[str, Mapping[str, Any]]:
         payload: dict[str, Any] = {
             "context": dict(context if context is not None else self.context),
@@ -84,7 +85,7 @@ class PennantClient:
         flag = self._flags.get(key) or {}
         return bool(flag.get("enabled", False))
 
-    def get_variant(self, key: str) -> Optional[str]:
+    def get_variant(self, key: str) -> str | None:
         flag = self._flags.get(key) or {}
         variant = flag.get("variant")
         return variant if isinstance(variant, str) else None
@@ -95,7 +96,7 @@ def is_enabled(flags: Mapping[str, Mapping[str, Any]], key: str) -> bool:
     return bool(flag.get("enabled", False))
 
 
-def get_variant(flags: Mapping[str, Mapping[str, Any]], key: str) -> Optional[str]:
+def get_variant(flags: Mapping[str, Mapping[str, Any]], key: str) -> str | None:
     flag = flags.get(key) or {}
     variant = flag.get("variant")
     return variant if isinstance(variant, str) else None

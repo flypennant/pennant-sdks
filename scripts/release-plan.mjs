@@ -7,7 +7,7 @@ const PACKAGES = SDK_IDS.map((id) => ({
   id,
   tagPrefix: `${id}/v`,
   pathPrefix: `${id}/`,
-  fallbackVersion: "1.0.0",
+  fallbackVersion: "1.1.0",
 }))
 
 function parseSemver(version) {

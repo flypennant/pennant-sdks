@@ -9,3 +9,7 @@ __pycache__/
 *.egg-info/
 build/
 rust/target/
+
+# Cursor and Claude skill pointers. Real skills live in .agents/skills.
+.claude/
+.cursor/
