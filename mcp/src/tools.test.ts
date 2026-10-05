@@ -28,6 +28,16 @@ function stubClient(overrides: Partial<ConsoleClient> = {}) {
   const client = {
     hasClientKey: false,
     evaluate: async () => null,
+    whoami: async () => ({
+      user: {
+        id: "ada",
+        email: 'ada@example.com via token "Claude"',
+        name: "Ada",
+        role: "editor",
+        projectIds: ["default"],
+      },
+      token: { name: "Claude", scope: "write" as const, projectIds: [] },
+    }),
     listProjects: async () => [{ id: "default", name: "Default" }],
     listEnvironments: async () => ["development", "production"],
     listFlags: async () => [FLAG],
@@ -62,8 +72,7 @@ function stubClient(overrides: Partial<ConsoleClient> = {}) {
 
 const CONFIG: McpConfig = {
   url: "https://flags.example.com",
-  email: "a",
-  password: "b",
+  token: "pnt_test_token_value_0000000000000000000",
   project: "default",
   readOnly: false,
 }
@@ -98,6 +107,7 @@ describe("MCP tools", () => {
       "sdk_setup",
       "set_flag_enabled",
       "update_targeting",
+      "whoami",
     ])
   })
 
@@ -107,6 +117,13 @@ describe("MCP tools", () => {
     assert.ok(!names.includes("create_flag"))
     assert.ok(!names.includes("set_flag_enabled"))
     assert.ok(names.includes("explain_flag"))
+  })
+
+  it("reports who the token acts as", async () => {
+    const mcp = await connect(stubClient().client)
+    const result = await mcp.callTool({ name: "whoami", arguments: {} })
+    assert.match(text(result), /Acting as ada@example\.com via token "Claude"/)
+    assert.match(text(result), /Role for this token: editor/)
   })
 
   it("summarises flags per environment", async () => {

@@ -86,6 +86,33 @@ function registerTools(server: McpServer, client: ConsoleClient, config: McpConf
   /* ---------- read ---------- */
 
   server.registerTool(
+    "whoami",
+    {
+      title: "Who am I",
+      description:
+        "Show which Pennant user this server acts as, the token's scope and projects, and the role it is capped to.",
+      annotations: { readOnlyHint: true },
+    },
+    () =>
+      guarded(async () => {
+        const { user, token } = await client.whoami()
+        const projects =
+          user.role === "admin" ? "every project" : user.projectIds.join(", ") || "no projects"
+        const lines = [
+          `Acting as ${user.email}.`,
+          `Role for this token: ${user.role}. Projects: ${projects}.`,
+          token
+            ? `Token "${token.name}" is ${token.scope === "write" ? "read and write" : "read only"}.`
+            : "",
+          config.readOnly
+            ? "This server is in read-only mode, so write tools are not available."
+            : "",
+        ]
+        return ok(lines.filter(Boolean).join("\n"))
+      }),
+  )
+
+  server.registerTool(
     "list_projects",
     {
       title: "List projects",

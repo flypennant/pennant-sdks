@@ -4,37 +4,42 @@ import { describe, it } from "node:test"
 import { readConfig } from "./config.ts"
 import { ConsoleError, createConsoleClient } from "./console-client.ts"
 
-type Call = { url: string; method: string; headers: Record<string, string>; body?: string }
+type Call = { url: string; method: string; headers: Record<string, string> }
 
-/** A tiny fake console: signs in, then answers admin requests while the session is valid. */
-function fakeConsole(options: { expireOnce?: boolean } = {}) {
+const TOKEN = "pnt_0123456789abcdefghijklmnopqrstuvwxyzABCD"
+
+/** A tiny fake console that accepts one access token. */
+function fakeConsole() {
   const calls: Call[] = []
-  let session = 0
-  let expired = false
   const fetchImpl = (async (input: string | URL, init?: RequestInit) => {
     const url = String(input)
-    const headers = Object.fromEntries(
-      Object.entries((init?.headers ?? {}) as Record<string, string>),
-    )
-    calls.push({
-      url,
-      method: init?.method ?? "GET",
-      headers,
-      body: init?.body as string | undefined,
-    })
-    if (url.endsWith("/api/auth/sign-in")) {
-      session++
-      return new Response(JSON.stringify({ user: { id: "u" } }), {
-        status: 200,
-        headers: { "Set-Cookie": `pennant.session=s${session}; Path=/; HttpOnly` },
-      })
-    }
-    if (options.expireOnce && !expired) {
-      expired = true
-      return new Response(JSON.stringify({ error: "Sign in required." }), { status: 401 })
+    const headers = { ...((init?.headers ?? {}) as Record<string, string>) }
+    calls.push({ url, method: init?.method ?? "GET", headers })
+    if (headers.Authorization !== `Bearer ${TOKEN}`) {
+      return new Response(
+        JSON.stringify({ error: "That access token is invalid, expired, or revoked." }),
+        {
+          status: 401,
+        },
+      )
     }
     if (url.includes("/api/admin/flags/missing")) {
       return new Response(JSON.stringify({ error: "No flag with that key." }), { status: 404 })
+    }
+    if (url.includes("/api/auth/session")) {
+      return new Response(
+        JSON.stringify({
+          user: {
+            id: "ada",
+            email: 'ada@example.com via token "Claude"',
+            name: "Ada",
+            role: "editor",
+            projectIds: ["web"],
+          },
+          token: { name: "Claude", scope: "write", projectIds: [] },
+        }),
+        { status: 200 },
+      )
     }
     if (url.includes("/api/admin/flags"))
       return new Response(JSON.stringify({ flags: [] }), { status: 200 })
@@ -44,41 +49,53 @@ function fakeConsole(options: { expireOnce?: boolean } = {}) {
 }
 
 describe("console client", () => {
-  it("signs in once, sends the session cookie and Origin, and scopes to the project", async () => {
+  it("sends the token as a bearer header, with no cookie, and scopes to the project", async () => {
     const { calls, fetchImpl } = fakeConsole()
     const client = createConsoleClient({
       url: "https://flags.example.com",
-      email: "a@b.c",
-      password: "pw",
+      token: TOKEN,
       fetch: fetchImpl,
     })
     await client.listFlags("web")
-    await client.listFlags("web")
-    assert.equal(calls.filter((c) => c.url.endsWith("/sign-in")).length, 1)
-    const list = calls.find((c) => c.url.includes("/api/admin/flags"))!
-    assert.equal(list.headers.Cookie, "pennant.session=s1")
-    assert.equal(list.headers.Origin, "https://flags.example.com")
-    assert.match(list.url, /project=web/)
+    const [call] = calls
+    assert.equal(call.headers.Authorization, `Bearer ${TOKEN}`)
+    assert.equal(call.headers.Cookie, undefined)
+    assert.equal(call.headers.Origin, undefined)
+    assert.match(call.url, /project=web/)
   })
 
-  it("signs in again once when the session expires", async () => {
-    const { calls, fetchImpl } = fakeConsole({ expireOnce: true })
+  it("reports who the token acts as", async () => {
+    const { fetchImpl } = fakeConsole()
     const client = createConsoleClient({
       url: "https://flags.example.com",
-      email: "a@b.c",
-      password: "pw",
+      token: TOKEN,
       fetch: fetchImpl,
     })
-    await client.listFlags("web")
-    assert.equal(calls.filter((c) => c.url.endsWith("/sign-in")).length, 2)
+    const identity = await client.whoami()
+    assert.equal(identity.user.role, "editor")
+    assert.equal(identity.token?.scope, "write")
+  })
+
+  it("tells the user to replace a rejected token", async () => {
+    const { fetchImpl } = fakeConsole()
+    const client = createConsoleClient({
+      url: "https://flags.example.com",
+      token: "pnt_revoked_token_value_000000000000000",
+      fetch: fetchImpl,
+    })
+    await assert.rejects(client.listFlags("web"), (error: unknown) => {
+      assert.ok(error instanceof ConsoleError)
+      assert.equal(error.status, 401)
+      assert.match(error.message, /Tokens page/)
+      return true
+    })
   })
 
   it("surfaces the console's error message", async () => {
     const { fetchImpl } = fakeConsole()
     const client = createConsoleClient({
       url: "https://flags.example.com",
-      email: "a@b.c",
-      password: "pw",
+      token: TOKEN,
       fetch: fetchImpl,
     })
     await assert.rejects(client.getFlag("web", "missing"), (error: unknown) => {
@@ -93,8 +110,7 @@ describe("console client", () => {
     const { fetchImpl } = fakeConsole()
     const client = createConsoleClient({
       url: "https://flags.example.com",
-      email: "a@b.c",
-      password: "pw",
+      token: TOKEN,
       fetch: fetchImpl,
     })
     assert.equal(await client.evaluate("production", {}), null)
@@ -102,23 +118,36 @@ describe("console client", () => {
 })
 
 describe("readConfig", () => {
-  it("requires a URL and credentials", () => {
-    assert.match(readConfig({}) as string, /PENNANT_URL, PENNANT_EMAIL, PENNANT_PASSWORD/)
-    assert.match(
-      readConfig({ PENNANT_URL: "nope", PENNANT_EMAIL: "a", PENNANT_PASSWORD: "b" }) as string,
-      /full URL/,
-    )
+  it("requires a URL and a token", () => {
+    assert.match(readConfig({}) as string, /PENNANT_URL and PENNANT_TOKEN/)
+  })
+
+  it("rejects the old email and password settings", () => {
+    const result = readConfig({
+      PENNANT_URL: "https://x.example",
+      PENNANT_TOKEN: TOKEN,
+      PENNANT_PASSWORD: "pw",
+    })
+    assert.match(result as string, /no longer supported/)
+  })
+
+  it("rejects a client key passed as the token", () => {
+    const result = readConfig({
+      PENNANT_URL: "https://x.example",
+      PENNANT_TOKEN: "pennant_client_key",
+    })
+    assert.match(result as string, /starting with pnt_/)
   })
 
   it("normalises the URL and reads the options", () => {
     const config = readConfig({
       PENNANT_URL: "https://flags.example.com/console/",
-      PENNANT_EMAIL: "a@b.c",
-      PENNANT_PASSWORD: "pw",
+      PENNANT_TOKEN: TOKEN,
       PENNANT_READ_ONLY: "1",
     })
     assert.ok(typeof config !== "string")
     assert.equal(config.url, "https://flags.example.com")
+    assert.equal(config.token, TOKEN)
     assert.equal(config.project, "default")
     assert.equal(config.readOnly, true)
   })

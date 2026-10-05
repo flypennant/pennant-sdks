@@ -8,6 +8,7 @@ import { registerTools } from "./tools.ts"
 
 const INSTRUCTIONS = `Pennant is a self-hosted feature-flag console. Use these tools to read flags, explain why a flag is on or off for a user, change flags, and add a Pennant SDK to a codebase.
 
+- Call whoami first if you are unsure what you may change. The token acts as a Pennant user, capped at editor, and may be read only.
 - To add Pennant to a codebase: call detect_stack, then sdk_setup, then edit the code so the new behaviour runs only when the flag is on.
 - New flags start off everywhere. Prefer turning a flag on in development first.
 - Production changes may need approval. When a tool says a change request was opened, tell the user an admin must approve it in the console.
