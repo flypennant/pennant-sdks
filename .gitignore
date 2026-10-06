@@ -21,6 +21,7 @@ android/local.properties
 php/vendor/
 php/composer.lock
 php/.phpunit.cache/
+php/.phpunit.result.cache
 dotnet/**/bin/
 dotnet/**/obj/
 flutter/.dart_tool/
