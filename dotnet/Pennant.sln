@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{9735C777-4A2E-47AD-9C82-248B58399258}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pennant", "src\Pennant\Pennant.csproj", "{1361B695-CB20-4E32-8CC5-1F22D200B73F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{CD243C42-3E27-4015-B689-A6B225941A3F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pennant.Tests", "tests\Pennant.Tests\Pennant.Tests.csproj", "{614F28A8-9B3A-4A37-B31C-3BFDD3021E75}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1361B695-CB20-4E32-8CC5-1F22D200B73F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1361B695-CB20-4E32-8CC5-1F22D200B73F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1361B695-CB20-4E32-8CC5-1F22D200B73F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1361B695-CB20-4E32-8CC5-1F22D200B73F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{614F28A8-9B3A-4A37-B31C-3BFDD3021E75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{614F28A8-9B3A-4A37-B31C-3BFDD3021E75}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{614F28A8-9B3A-4A37-B31C-3BFDD3021E75}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{614F28A8-9B3A-4A37-B31C-3BFDD3021E75}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1361B695-CB20-4E32-8CC5-1F22D200B73F} = {9735C777-4A2E-47AD-9C82-248B58399258}
+		{614F28A8-9B3A-4A37-B31C-3BFDD3021E75} = {CD243C42-3E27-4015-B689-A6B225941A3F}
+	EndGlobalSection
+EndGlobal

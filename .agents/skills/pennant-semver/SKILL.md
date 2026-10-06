@@ -23,15 +23,22 @@ Take the highest level among commits since that SDK's tag that touch its folder.
 
 An SDK is tagged only when a commit since its last tag changes files under its folder. Root files such as `README.md`, `CONTRACT.md`, `scripts/`, and `.github/` never release anything.
 
-| SDK    | Folder    | Tag             | Registry                |
-| ------ | --------- | --------------- | ----------------------- |
-| react  | `react/`  | `react/vX.Y.Z`  | npm `@pennant/react`    |
-| js     | `js/`     | `js/vX.Y.Z`     | npm `@pennant/js`       |
-| vue    | `vue/`    | `vue/vX.Y.Z`    | npm `@pennant/vue`      |
-| node   | `node/`   | `node/vX.Y.Z`   | npm `@pennant/node`     |
-| python | `python/` | `python/vX.Y.Z` | PyPI `pennant-sdk`      |
-| go     | `go/`     | `go/vX.Y.Z`     | Go proxy (tag only)     |
-| rust   | `rust/`   | `rust/vX.Y.Z`   | crates.io `pennant-sdk` |
+| SDK     | Folder     | Tag              | Registry                         |
+| ------- | ---------- | ---------------- | -------------------------------- |
+| react   | `react/`   | `react/vX.Y.Z`   | npm `@pennant/react`             |
+| js      | `js/`      | `js/vX.Y.Z`      | npm `@pennant/js`                |
+| vue     | `vue/`     | `vue/vX.Y.Z`     | npm `@pennant/vue`               |
+| node    | `node/`    | `node/vX.Y.Z`    | npm `@pennant/node`              |
+| python  | `python/`  | `python/vX.Y.Z`  | PyPI `pennant-sdk`               |
+| go      | `go/`      | `go/vX.Y.Z`      | Go proxy (tag only)              |
+| rust    | `rust/`    | `rust/vX.Y.Z`    | crates.io `pennant-sdk`          |
+| java    | `java/`    | `java/vX.Y.Z`    | Maven (tag for now)              |
+| kotlin  | `kotlin/`  | `kotlin/vX.Y.Z`  | Maven (tag for now)              |
+| ios     | `ios/`     | `ios/vX.Y.Z`     | Swift package (tag for now)      |
+| android | `android/` | `android/vX.Y.Z` | Maven (tag for now)              |
+| php     | `php/`     | `php/vX.Y.Z`     | Composer (tag for now)           |
+| dotnet  | `dotnet/`  | `dotnet/vX.Y.Z`  | NuGet `Pennant.Sdk`              |
+| flutter | `flutter/` | `flutter/vX.Y.Z` | pub git dependency (tag for now) |
 
 The tag prefix must match the folder so `go get github.com/flypennant/pennant-sdks/go` resolves versions. At 2.0.0 the Go module path has to end in `/v2`.
 
@@ -46,7 +53,12 @@ After the first tag, write the new version back, then commit `chore(release): <t
 - npm SDKs: `<sdk>/package.json` and the `<sdk>` workspace entry in the root `package-lock.json`.
 - Python: `python/pyproject.toml` only.
 - Rust: `rust/Cargo.toml` and the `pennant-sdk` entry in `rust/Cargo.lock`.
-- Go has no version file. The tag is the version.
+- Java: `java/pom.xml` project version.
+- Kotlin: `kotlin/build.gradle.kts` `version`.
+- Android: `android/build.gradle.kts` `version`.
+- .NET: `<Version>` in `dotnet/src/Pennant/Pennant.csproj`.
+- Flutter: `version:` in `flutter/pubspec.yaml`.
+- Go, iOS, and PHP have no version file. The tag is the version.
 
 ## Publishing
 

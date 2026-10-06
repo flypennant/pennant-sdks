@@ -14,11 +14,19 @@ import {
   versionFromTag,
 } from "./release-plan.mjs"
 import {
+  readCsprojVersion,
+  readGradleVersion,
   readJsonVersion,
+  readPomVersion,
+  readPubspecVersion,
   readTomlVersion,
   updateCargoLock,
+  updateCsprojVersion,
+  updateGradleVersion,
   updatePackageJson,
   updatePackageLock,
+  updatePomVersion,
+  updatePubspecVersion,
   updateTomlVersion,
 } from "./release-versions.mjs"
 
@@ -32,6 +40,13 @@ const FILES = {
   python: { toml: ["python/pyproject.toml"] },
   go: {},
   rust: { toml: ["rust/Cargo.toml"], cargoLock: ["rust/Cargo.lock"] },
+  java: { pom: ["java/pom.xml"] },
+  kotlin: { gradle: ["kotlin/build.gradle.kts"] },
+  ios: {},
+  android: { gradle: ["android/build.gradle.kts"] },
+  php: {},
+  dotnet: { csproj: ["dotnet/src/Pennant/Pennant.csproj"] },
+  flutter: { pubspec: ["flutter/pubspec.yaml"] },
   mcp: { packageJson: ["mcp/package.json"], lockPath: "mcp" },
 }
 
@@ -84,6 +99,14 @@ function readManifestVersion(pkg) {
   if (packageJson) return readJsonVersion(fs.readFileSync(path.join(root, packageJson), "utf8"))
   const toml = files.toml?.[0]
   if (toml) return readTomlVersion(fs.readFileSync(path.join(root, toml), "utf8"))
+  const pom = files.pom?.[0]
+  if (pom) return readPomVersion(fs.readFileSync(path.join(root, pom), "utf8"))
+  const gradle = files.gradle?.[0]
+  if (gradle) return readGradleVersion(fs.readFileSync(path.join(root, gradle), "utf8"))
+  const csproj = files.csproj?.[0]
+  if (csproj) return readCsprojVersion(fs.readFileSync(path.join(root, csproj), "utf8"))
+  const pubspec = files.pubspec?.[0]
+  if (pubspec) return readPubspecVersion(fs.readFileSync(path.join(root, pubspec), "utf8"))
   return pkg.fallbackVersion
 }
 
@@ -107,6 +130,18 @@ function applyVersions(plans) {
     for (const file of files.toml ?? []) {
       writeText(file, updateTomlVersion(readText(file), plan.version))
     }
+    for (const file of files.pom ?? []) {
+      writeText(file, updatePomVersion(readText(file), plan.version))
+    }
+    for (const file of files.gradle ?? []) {
+      writeText(file, updateGradleVersion(readText(file), plan.version))
+    }
+    for (const file of files.csproj ?? []) {
+      writeText(file, updateCsprojVersion(readText(file), plan.version))
+    }
+    for (const file of files.pubspec ?? []) {
+      writeText(file, updatePubspecVersion(readText(file), plan.version))
+    }
     for (const file of files.cargoLock ?? []) {
       writeText(file, updateCargoLock(readText(file), plan.version))
     }
@@ -124,6 +159,10 @@ function commitVersions(plans) {
     return [
       ...(entry.packageJson ?? []),
       ...(entry.toml ?? []),
+      ...(entry.pom ?? []),
+      ...(entry.gradle ?? []),
+      ...(entry.csproj ?? []),
+      ...(entry.pubspec ?? []),
       ...(entry.cargoLock ?? []),
       ...(entry.lockPath ? ["package-lock.json"] : []),
     ]
@@ -235,6 +274,33 @@ function publishCrate(plan) {
   run("cargo", ["publish", "--locked"], { cwd: path.join(root, "rust"), stdio: "inherit" })
 }
 
+function publishNuget(plan) {
+  if (plan.id !== "dotnet" || !process.env.NUGET_API_KEY) return
+  const cwd = path.join(root, "dotnet")
+  const out = path.join(os.tmpdir(), "pennant-nuget")
+  fs.rmSync(out, { recursive: true, force: true })
+  run("dotnet", ["pack", "src/Pennant/Pennant.csproj", "-c", "Release", "-o", out], {
+    cwd,
+    stdio: "inherit",
+  })
+  const nupkg = fs.readdirSync(out).find((name) => name.endsWith(".nupkg"))
+  if (!nupkg) throw new Error("dotnet pack produced no .nupkg")
+  run(
+    "dotnet",
+    [
+      "nuget",
+      "push",
+      path.join(out, nupkg),
+      "--api-key",
+      process.env.NUGET_API_KEY,
+      "--source",
+      "https://api.nuget.org/v3/index.json",
+      "--skip-duplicate",
+    ],
+    { cwd, stdio: "inherit" },
+  )
+}
+
 function publishRelease(plan) {
   const notesPath = writeNotes(plan, `pennant-sdk-release-${plan.id}.md`)
   const tags = new Set(readTags())
@@ -249,6 +315,7 @@ function publishRelease(plan) {
   publishNpm(plan)
   publishPypi(plan)
   publishCrate(plan)
+  publishNuget(plan)
 }
 
 function notesForExistingTag(pkg, tag, tags) {

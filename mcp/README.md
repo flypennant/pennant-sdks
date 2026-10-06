@@ -56,21 +56,21 @@ claude mcp add pennant \
 
 ## Tools
 
-| Tool                | What it does                                                                               |
-| ------------------- | ------------------------------------------------------------------------------------------ |
-| `whoami`            | Which user the token acts as, its role, projects, and scope.                               |
-| `list_projects`     | Projects the user can open.                                                                |
-| `list_environments` | A project's environments.                                                                  |
-| `list_flags`        | Flags with type, tags, parent, and on/off per environment. Filter by tag.                  |
-| `get_flag`          | One flag's full configuration.                                                             |
-| `list_segments`     | Saved audiences and their constraints.                                                     |
-| `explain_flag`      | Why a flag is on or off for a user, step by step, in the order the server checks.          |
-| `detect_stack`      | Reads `package.json`, `pyproject.toml`, `go.mod`, or `Cargo.toml` and picks the right SDK. |
-| `sdk_setup`         | Install command, environment variables, and a first flag check, pointed at your console.   |
-| `create_flag`       | Creates a flag. It starts off in every environment.                                        |
-| `set_flag_enabled`  | Switches a flag on or off in one environment.                                              |
-| `update_targeting`  | Changes strategy, constraints, variants, or segments in one environment.                   |
-| `archive_flag`      | Archives or restores a flag.                                                               |
+| Tool                | What it does                                                                                                        |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `whoami`            | Which user the token acts as, its role, projects, and scope.                                                        |
+| `list_projects`     | Projects the user can open.                                                                                         |
+| `list_environments` | A project's environments.                                                                                           |
+| `list_flags`        | Flags with type, tags, parent, and on/off per environment. Filter by tag.                                           |
+| `get_flag`          | One flag's full configuration.                                                                                      |
+| `list_segments`     | Saved audiences and their constraints.                                                                              |
+| `explain_flag`      | Why a flag is on or off for a user, step by step, in the order the server checks.                                   |
+| `detect_stack`      | Reads package manifests (npm, Python, Go, Rust, Maven, Gradle, Swift, Composer, .NET, pub) and picks the right SDK. |
+| `sdk_setup`         | Install command, environment variables, and a first flag check, pointed at your console.                            |
+| `create_flag`       | Creates a flag. It starts off in every environment.                                                                 |
+| `set_flag_enabled`  | Switches a flag on or off in one environment.                                                                       |
+| `update_targeting`  | Changes strategy, constraints, variants, or segments in one environment.                                            |
+| `archive_flag`      | Archives or restores a flag.                                                                                        |
 
 When a project requires approval for production, `set_flag_enabled` and `update_targeting` open a change request instead of applying the change. An admin approves it in the console.
 

@@ -3,7 +3,8 @@ name: Release
 # Runs after CI passes on main. Bumps each changed SDK from conventional
 # commits, tags <sdk>/vX.Y.Z, creates the GitHub release, and publishes.
 # npm uses trusted publishing (OIDC, needs id-token: write and npm >= 11.5.1).
-# PyPI and crates.io publish when PYPI_TOKEN or CARGO_REGISTRY_TOKEN is set.
+# PyPI, crates.io, and NuGet publish when PYPI_TOKEN, CARGO_REGISTRY_TOKEN, or
+# NUGET_API_KEY is set.
 on:
   workflow_run:
     workflows: [CI]
@@ -41,6 +42,10 @@ jobs:
 
       - uses: dtolnay/rust-toolchain@stable
 
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
       - name: Install
         run: |
           npm install -g npm@latest
@@ -53,4 +58,5 @@ jobs:
           NPM_PUBLISH: "1"
           PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
         run: node scripts/release.mjs

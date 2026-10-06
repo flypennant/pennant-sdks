@@ -240,7 +240,7 @@ function registerTools(server: McpServer, client: ConsoleClient, config: McpConf
     {
       title: "Detect the codebase's stack",
       description:
-        "Read the manifest files (package.json, pyproject.toml, go.mod, Cargo.toml) in a directory and say which Pennant SDK fits.",
+        "Read the manifest files (package.json, pyproject.toml, go.mod, Cargo.toml, pom.xml, Gradle, Package.swift, composer.json, pubspec.yaml, .csproj) in a directory and say which Pennant SDK fits.",
       inputSchema: {
         path: z
           .string()
@@ -255,7 +255,7 @@ function registerTools(server: McpServer, client: ConsoleClient, config: McpConf
         const detections = detectStack(await readManifests(dir))
         if (detections.length === 0) {
           return ok(
-            `No package.json, pyproject.toml, requirements.txt, go.mod, or Cargo.toml in ${dir}. Run sdk_setup with the SDK you want.`,
+            `No supported manifest in ${dir} (package.json, pyproject.toml, go.mod, Cargo.toml, pom.xml, Gradle, Package.swift, composer.json, pubspec.yaml, .csproj). Run sdk_setup with the SDK you want.`,
           )
         }
         return json({

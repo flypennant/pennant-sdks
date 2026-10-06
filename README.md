@@ -2,15 +2,22 @@
 
 Client libraries for [Pennant](https://flypennant.com), a self-hosted feature-flag console. Every SDK calls `POST /api/client/evaluate` with a project client key. [`CONTRACT.md`](CONTRACT.md) describes the request and response.
 
-| SDK               | Install                                                | Import           |
-| ----------------- | ------------------------------------------------------ | ---------------- |
-| [React](react/)   | `npm install @pennant/react`                           | `@pennant/react` |
-| [Browser JS](js/) | `npm install @pennant/js`                              | `@pennant/js`    |
-| [Vue](vue/)       | `npm install @pennant/vue`                             | `@pennant/vue`   |
-| [Node](node/)     | `npm install @pennant/node`                            | `@pennant/node`  |
-| [Python](python/) | `pip install pennant-sdk`                              | `import pennant` |
-| [Go](go/)         | `go get github.com/flypennant/pennant-sdks/go`         | `pennant`        |
-| [Rust](rust/)     | `pennant = { package = "pennant-sdk", version = "1" }` | `pennant`        |
+| SDK                 | Install                                                 | Import                           |
+| ------------------- | ------------------------------------------------------- | -------------------------------- |
+| [React](react/)     | `npm install @pennant/react`                            | `@pennant/react`                 |
+| [Browser JS](js/)   | `npm install @pennant/js`                               | `@pennant/js`                    |
+| [Vue](vue/)         | `npm install @pennant/vue`                              | `@pennant/vue`                   |
+| [Node](node/)       | `npm install @pennant/node`                             | `@pennant/node`                  |
+| [Python](python/)   | `pip install pennant-sdk`                               | `import pennant`                 |
+| [Go](go/)           | `go get github.com/flypennant/pennant-sdks/go`          | `pennant`                        |
+| [Rust](rust/)       | `pennant = { package = "pennant-sdk", version = "1" }`  | `pennant`                        |
+| [.NET](dotnet/)     | `dotnet add package Pennant.Sdk`                        | `using Pennant;`                 |
+| [Java](java/)       | `com.flypennant:pennant-sdk` (from source for now)      | `com.flypennant.pennant`         |
+| [Kotlin](kotlin/)   | `com.flypennant:pennant-kotlin` (from source for now)   | `com.flypennant.pennant`         |
+| [Android](android/) | `com.flypennant:pennant-android` (from source for now)  | `com.flypennant.pennant.android` |
+| [iOS](ios/)         | SwiftPM `https://github.com/flypennant/pennant-sdks`    | `import Pennant`                 |
+| [Flutter](flutter/) | `pennant_flutter` from git, `path: flutter`             | `package:pennant_flutter`        |
+| [PHP](php/)         | `flypennant/pennant` (Composer path repository for now) | `Pennant\PennantClient`          |
 
 ## AI assistants
 
@@ -30,12 +37,19 @@ npm run check     # typecheck, ESLint, Prettier, tests
 npm run release   # print the next release plan without publishing
 ```
 
-| SDK    | Lint and format                                               | Test            |
-| ------ | ------------------------------------------------------------- | --------------- |
-| JS     | `npm run lint`, `npm run format:check`                        | `npm test`      |
-| Python | `ruff check .`, `ruff format --check .` in `python/`          | `pytest`        |
-| Go     | `gofmt -l .`, `go vet ./...` in `go/`                         | `go test ./...` |
-| Rust   | `cargo fmt --check`, `cargo clippy -- -D warnings` in `rust/` | `cargo test`    |
+| SDK     | Lint and format                                               | Test                       |
+| ------- | ------------------------------------------------------------- | -------------------------- |
+| JS      | `npm run lint`, `npm run format:check`                        | `npm test`                 |
+| Python  | `ruff check .`, `ruff format --check .` in `python/`          | `pytest`                   |
+| Go      | `gofmt -l .`, `go vet ./...` in `go/`                         | `go test ./...`            |
+| Rust    | `cargo fmt --check`, `cargo clippy -- -D warnings` in `rust/` | `cargo test`               |
+| Java    | compiler warnings in `java/`                                  | `mvn -B test`              |
+| Kotlin  | compiler warnings in `kotlin/`                                | `gradle test`              |
+| Android | compiler warnings in `android/`                               | `gradle testDebugUnitTest` |
+| iOS     | compiler warnings in `ios/` and the root `Package.swift`      | `swift test`               |
+| PHP     | `composer validate --strict`, `composer lint` in `php/`       | `composer test`            |
+| .NET    | `dotnet format --verify-no-changes` in `dotnet/`              | `dotnet test`              |
+| Flutter | `dart format`, `flutter analyze` in `flutter/`                | `flutter test`             |
 
 Commits follow [Conventional Commits](https://www.conventionalcommits.org). Husky runs lint-staged on commit, commitlint on the message, and the JS checks on push. CI runs every row of the table.
 
@@ -45,4 +59,4 @@ Each SDK is versioned on its own. Tags are `<sdk>/vX.Y.Z`, for example `react/v1
 
 After CI passes on `main`, the Release workflow tags every SDK that changed, writes the new version into its manifest in a `chore(release)` commit, creates a GitHub release with notes, and publishes to the registry.
 
-npm uses [trusted publishing](https://docs.npmjs.com/trusted-publishers). Each `@pennant/*` package on npmjs.com trusts `flypennant/pennant-sdks` and the `release.yml` workflow, so there is no npm secret. PyPI and crates.io publish when the `PYPI_TOKEN` or `CARGO_REGISTRY_TOKEN` repository secret is set. Without one, that registry is skipped and the tag and GitHub release still happen. Go needs nothing; the tag is the release.
+npm uses [trusted publishing](https://docs.npmjs.com/trusted-publishers). Each `@pennant/*` package on npmjs.com trusts `flypennant/pennant-sdks` and the `release.yml` workflow, so there is no npm secret. PyPI, crates.io, and NuGet publish when the `PYPI_TOKEN`, `CARGO_REGISTRY_TOKEN`, or `NUGET_API_KEY` repository secret is set. Without one, that registry is skipped and the tag and GitHub release still happen. Go, iOS, and Flutter install straight from the tag. Java, Kotlin, and Android (Maven Central), PHP (Packagist, which needs a split repository), and Flutter on pub.dev are tag-only until their publishing is set up.
