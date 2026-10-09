@@ -86,6 +86,33 @@ function registerTools(server: McpServer, client: ConsoleClient, config: McpConf
   /* ---------- read ---------- */
 
   server.registerTool(
+    "whoami",
+    {
+      title: "Who am I",
+      description:
+        "Show which Pennant user this server acts as, the token's scope and projects, and the role it is capped to.",
+      annotations: { readOnlyHint: true },
+    },
+    () =>
+      guarded(async () => {
+        const { user, token } = await client.whoami()
+        const projects =
+          user.role === "admin" ? "every project" : user.projectIds.join(", ") || "no projects"
+        const lines = [
+          `Acting as ${user.email}.`,
+          `Role for this token: ${user.role}. Projects: ${projects}.`,
+          token
+            ? `Token "${token.name}" is ${token.scope === "write" ? "read and write" : "read only"}.`
+            : "",
+          config.readOnly
+            ? "This server is in read-only mode, so write tools are not available."
+            : "",
+        ]
+        return ok(lines.filter(Boolean).join("\n"))
+      }),
+  )
+
+  server.registerTool(
     "list_projects",
     {
       title: "List projects",
@@ -213,7 +240,7 @@ function registerTools(server: McpServer, client: ConsoleClient, config: McpConf
     {
       title: "Detect the codebase's stack",
       description:
-        "Read the manifest files (package.json, pyproject.toml, go.mod, Cargo.toml) in a directory and say which Pennant SDK fits.",
+        "Read the manifest files (package.json, pyproject.toml, go.mod, Cargo.toml, pom.xml, Gradle, Package.swift, composer.json, pubspec.yaml, .csproj) in a directory and say which Pennant SDK fits.",
       inputSchema: {
         path: z
           .string()
@@ -228,7 +255,7 @@ function registerTools(server: McpServer, client: ConsoleClient, config: McpConf
         const detections = detectStack(await readManifests(dir))
         if (detections.length === 0) {
           return ok(
-            `No package.json, pyproject.toml, requirements.txt, go.mod, or Cargo.toml in ${dir}. Run sdk_setup with the SDK you want.`,
+            `No supported manifest in ${dir} (package.json, pyproject.toml, go.mod, Cargo.toml, pom.xml, Gradle, Package.swift, composer.json, pubspec.yaml, .csproj). Run sdk_setup with the SDK you want.`,
           )
         }
         return json({

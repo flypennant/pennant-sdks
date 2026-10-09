@@ -9,6 +9,24 @@ __pycache__/
 *.egg-info/
 build/
 rust/target/
+java/target/
+kotlin/.gradle/
+kotlin/build/
+ios/.build/
+/.build/
+/.swiftpm/
+android/.gradle/
+android/build/
+android/local.properties
+php/vendor/
+php/composer.lock
+php/.phpunit.cache/
+php/.phpunit.result.cache
+dotnet/**/bin/
+dotnet/**/obj/
+flutter/.dart_tool/
+flutter/build/
+flutter/pubspec.lock
 
 # Cursor and Claude skill pointers. Real skills live in .agents/skills.
 .claude/

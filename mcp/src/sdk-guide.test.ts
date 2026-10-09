@@ -25,15 +25,37 @@ describe("detectStack", () => {
     )
   })
 
-  it("recognises Python, Go, and Rust manifests", () => {
+  it("recognises Python, Go, Rust, Java, Kotlin, and iOS manifests", () => {
     const files = new Map([
       ["pyproject.toml", "[project]"],
       ["go.mod", "module x"],
       ["Cargo.toml", "[package]"],
+      ["pom.xml", "<project/>"],
+      ["build.gradle.kts", 'kotlin("jvm")'],
+      ["Package.swift", "// swift-tools-version: 5.9"],
     ])
     assert.deepEqual(
       detectStack(files).map((d) => d.sdk),
-      ["python", "go", "rust"],
+      ["python", "go", "rust", "java", "kotlin", "ios"],
+    )
+  })
+
+  it("recognises Android, PHP, .NET, and Flutter projects", () => {
+    assert.deepEqual(
+      detectStack(new Map([["build.gradle.kts", 'plugins { id("com.android.application") }']])).map(
+        (d) => d.sdk,
+      ),
+      ["android"],
+    )
+    assert.deepEqual(
+      detectStack(
+        new Map([
+          ["composer.json", "{}"],
+          ["Shop.Api.csproj", ""],
+          ["pubspec.yaml", "dependencies:\n  flutter:\n    sdk: flutter\n"],
+        ]),
+      ).map((d) => d.sdk),
+      ["flutter", "php", "dotnet"],
     )
   })
 

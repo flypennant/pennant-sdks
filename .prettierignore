@@ -6,3 +6,12 @@ rust/Cargo.lock
 python/.venv
 .claude
 .cursor
+php/vendor
+flutter/.dart_tool
+flutter/build
+dotnet/**/bin
+dotnet/**/obj
+android/build
+kotlin/build
+java/target
+ios/.build

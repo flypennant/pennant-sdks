@@ -12,7 +12,17 @@ import {
   releaseNotes,
   textFromStdout,
 } from "./release-plan.mjs"
-import { updateCargoLock, updatePackageLock, updateTomlVersion } from "./release-versions.mjs"
+import {
+  readCsprojVersion,
+  readPubspecVersion,
+  updateCargoLock,
+  updateCsprojVersion,
+  updateGradleVersion,
+  updatePackageLock,
+  updatePomVersion,
+  updatePubspecVersion,
+  updateTomlVersion,
+} from "./release-versions.mjs"
 
 const react = PACKAGES.find((pkg) => pkg.id === "react")
 const go = PACKAGES.find((pkg) => pkg.id === "go")
@@ -66,6 +76,13 @@ describe("release plan", () => {
         "python/v1.1.0",
         "go/v1.1.0",
         "rust/v1.1.0",
+        "java/v1.1.0",
+        "kotlin/v1.1.0",
+        "ios/v1.1.0",
+        "android/v1.1.0",
+        "php/v1.1.0",
+        "dotnet/v1.1.0",
+        "flutter/v1.1.0",
         "mcp/v1.1.0",
       ],
     )
@@ -162,5 +179,22 @@ describe("version files", () => {
     const next = updateCargoLock(cargo, "0.2.0")
     assert.match(next, /name = "once_cell"\nversion = "1.21.4"/)
     assert.match(next, /name = "pennant-sdk"\nversion = "0.2.0"/)
+  })
+
+  it("updates java pom and kotlin gradle versions in place", () => {
+    const pom =
+      "<artifactId>pennant-sdk</artifactId>\n  <version>1.0.0</version>\n  <packaging>jar</packaging>\n"
+    assert.match(updatePomVersion(pom, "1.1.0"), /<version>1\.1\.0<\/version>/)
+    assert.match(updateGradleVersion('version = "1.0.0"\n', "1.2.0"), /version = "1\.2\.0"/)
+  })
+
+  it("updates the dotnet csproj and flutter pubspec versions in place", () => {
+    const csproj = "<PackageId>Pennant.Sdk</PackageId>\n    <Version>1.1.0</Version>\n"
+    assert.equal(readCsprojVersion(csproj), "1.1.0")
+    assert.match(updateCsprojVersion(csproj, "1.2.0"), /<Version>1\.2\.0<\/Version>/)
+    const pubspec = 'name: pennant_flutter\nversion: 1.1.0\nenvironment:\n  sdk: ">=3.4.0 <4.0.0"\n'
+    assert.equal(readPubspecVersion(pubspec), "1.1.0")
+    assert.equal(readPubspecVersion(updatePubspecVersion(pubspec, "2.0.0")), "2.0.0")
+    assert.match(updatePubspecVersion(pubspec, "2.0.0"), /sdk: ">=3\.4\.0 <4\.0\.0"/)
   })
 })

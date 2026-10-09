@@ -11,10 +11,16 @@ import type {
 
 type ClientOptions = {
   url: string
-  email: string
-  password: string
+  /** A Pennant access token (pnt_...), created on the console's Tokens page. */
+  token: string
   clientKey?: string
   fetch?: typeof fetch
+}
+
+/** Who the token acts as, from GET /api/auth/session. */
+type Identity = {
+  user: { id: string; email: string; name: string; role: string; projectIds: string[] }
+  token?: { name: string; scope: "read" | "write"; projectIds: string[] }
 }
 
 type ChangeRequest = { id: string; flagKey: string; environment: string; status: string }
@@ -33,27 +39,11 @@ class ConsoleError extends Error {
 }
 
 /**
- * Talks to the Pennant console as a signed-in user, so roles, project membership,
- * and production approvals apply exactly as they do in the browser.
+ * Talks to the Pennant console with an access token. The token acts as its owner,
+ * narrowed by its scope and projects, so roles and production approvals still apply.
  */
 function createConsoleClient(options: ClientOptions) {
   const fetchImpl = options.fetch ?? fetch
-  let cookie: string | null = null
-
-  async function signIn() {
-    const response = await fetchImpl(`${options.url}/api/auth/sign-in`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Origin: options.url },
-      body: JSON.stringify({ email: options.email, password: options.password }),
-    })
-    if (!response.ok) {
-      throw new ConsoleError(response.status, await errorText(response, "Sign-in failed."))
-    }
-    const setCookie = response.headers.get("set-cookie")
-    const session = setCookie?.split(";")[0]
-    if (!session) throw new ConsoleError(500, "Sign-in did not return a session.")
-    cookie = session
-  }
 
   async function request<T>(
     method: string,
@@ -64,31 +54,24 @@ function createConsoleClient(options: ClientOptions) {
     const url = new URL(`${options.url}${path}`)
     if (project) url.searchParams.set("project", project)
 
-    for (let attempt = 0; attempt < 2; attempt++) {
-      if (!cookie) await signIn()
-      const response = await fetchImpl(url, {
-        method,
-        headers: {
-          Cookie: cookie!,
-          Origin: options.url,
-          ...(body === undefined ? {} : { "Content-Type": "application/json" }),
-        },
-        body: body === undefined ? undefined : JSON.stringify(body),
-      })
-      // An expired session gets one fresh sign-in.
-      if (response.status === 401 && attempt === 0) {
-        cookie = null
-        continue
-      }
-      if (!response.ok) {
-        throw new ConsoleError(
-          response.status,
-          await errorText(response, `${method} ${path} failed.`),
-        )
-      }
-      return (await response.json()) as T
+    const response = await fetchImpl(url, {
+      method,
+      headers: {
+        Authorization: `Bearer ${options.token}`,
+        ...(body === undefined ? {} : { "Content-Type": "application/json" }),
+      },
+      body: body === undefined ? undefined : JSON.stringify(body),
+    })
+    if (!response.ok) {
+      const message = await errorText(response, `${method} ${path} failed.`)
+      throw new ConsoleError(
+        response.status,
+        response.status === 401
+          ? `${message} Create a new token on the console's Tokens page and update PENNANT_TOKEN.`
+          : message,
+      )
     }
-    throw new ConsoleError(401, "Sign-in required.")
+    return (await response.json()) as T
   }
 
   async function evaluate(environment: string, context: EvaluationContext, project?: string) {
@@ -108,6 +91,9 @@ function createConsoleClient(options: ClientOptions) {
   return {
     hasClientKey: Boolean(options.clientKey),
     evaluate,
+    async whoami() {
+      return request<Identity>("GET", "/api/auth/session")
+    },
     async listProjects() {
       return (await request<{ projects: ProjectSummary[] }>("GET", "/api/admin/projects")).projects
     },
@@ -196,4 +182,4 @@ async function errorText(response: Response, fallback: string) {
 type ConsoleClient = ReturnType<typeof createConsoleClient>
 
 export { ConsoleError, createConsoleClient }
-export type { ChangeRequest, ConsoleClient, ToggleResult }
+export type { ChangeRequest, ConsoleClient, Identity, ToggleResult }
