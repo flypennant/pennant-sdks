@@ -1,6 +1,6 @@
 {
   "name": "@pennant/mcp",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Model Context Protocol server for Pennant: read, explain, and change feature flags, and wire the SDK into a codebase",
   "license": "MIT",
   "type": "module",
