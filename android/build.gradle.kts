@@ -1,6 +1,6 @@
 plugins {
     id("com.android.library") version "8.7.3"
-    id("org.jetbrains.kotlin.android") version "2.1.10"
+    id("org.jetbrains.kotlin.android") version "2.1.21"
     `maven-publish`
 }
 
@@ -36,7 +36,7 @@ dependencies {
     testImplementation(kotlin("test"))
     testImplementation("junit:junit:4.13.2")
     // android.jar only has stubs for org.json; unit tests need the real thing.
-    testImplementation("org.json:json:20240303")
+    testImplementation("org.json:json:20260814")
 }
 
 publishing {
