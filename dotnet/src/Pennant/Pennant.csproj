@@ -10,7 +10,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
 
     <PackageId>Pennant.Sdk</PackageId>
-    <Version>1.1.0</Version>
+    <Version>1.1.1</Version>
     <Authors>flypennant</Authors>
     <Description>.NET client for the Pennant feature-flag evaluate API</Description>
     <PackageTags>feature-flags;feature-toggles;pennant</PackageTags>
